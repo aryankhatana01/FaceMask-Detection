@@ -9,23 +9,30 @@ from keras.models import load_model
 from keras.preprocessing import image
 from keras.preprocessing.image import ImageDataGenerator
 
-train_datagen = ImageDataGenerator(rescale = 1./255)
+train_datagen = ImageDataGenerator(rescale = 1./255,
+                                  rotation_range=20,
+                                  zoom_range=0.15,
+                                  width_shift_range=0.2,
+                                  height_shift_range=0.2,
+                                  shear_range=0.15,
+                                  horizontal_flip=True,
+                                  fill_mode="nearest")
 train_generator = train_datagen.flow_from_directory(
     directory='data',
-    target_size=(128, 128),
+    target_size=(224, 224),
     batch_size= 32,
     class_mode='categorical'
     )
 val_generator = train_datagen.flow_from_directory(
     directory='test',
-    target_size=(128, 128),
+    target_size=(224, 224),
     batch_size= 32,
     class_mode='categorical'
     )
 
 from tensorflow.keras.applications import ResNet50
 model = ResNet50(weights='imagenet',
-    input_shape=(128, 128, 3),
+    input_shape=(224, 224, 3),
     include_top=False)
 for layer in model.layers:
     layer.trainable=False
